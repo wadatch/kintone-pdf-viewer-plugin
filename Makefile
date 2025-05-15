@@ -1,9 +1,12 @@
+-include .env
+export
+
 .PHONY: build clean
 
 # 変数定義
 PLUGIN_NAME := pdf-viewer-plugin
 PLUGIN_VERSION := $(shell grep '"version"' manifest.json | cut -d'"' -f4)
-PPK_FILE ?= ppk/kdchpedpacegbomlohdplpofmohlihpi.ppk
+PPK_FILE ?= $(if $(SIGNING_KEY_PATH),$(SIGNING_KEY_PATH),ppk/kdchpedpacegbomlohdplpofmohlihpi.ppk)
 DIST_DIR := dist
 ZIP_FILE := plugin.zip
 

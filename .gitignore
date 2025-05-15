@@ -3,7 +3,6 @@ node_modules/
 *.zip
 *.log
 *.ppk
-!ppk/*.ppk
 dist/
 
 # 環境変数
