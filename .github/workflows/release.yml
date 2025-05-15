@@ -38,22 +38,32 @@ jobs:
       - name: Cleanup signing key
         run: rm -f ppk/private.ppk
 
-      - name: Get version from manifest.json
+      - name: Get current version from manifest.json
         id: get_version
-        run: echo "VERSION=$(jq -r .version manifest.json)" >> $GITHUB_ENV
+        run: echo "CURRENT_VERSION=$(jq -r .version manifest.json)" >> $GITHUB_ENV
+
+      - name: Increment version
+        run: |
+          NEW_VERSION=$((CURRENT_VERSION + 1))
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          jq --arg v "$NEW_VERSION" '.version = ($v|tonumber)' manifest.json > manifest.json.tmp
+          mv manifest.json.tmp manifest.json
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+          git add manifest.json
+          git commit -m "Bump version to $NEW_VERSION"
+          git push
 
       - name: Create Tag
         run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          git tag v${VERSION}
-          git push origin v${VERSION}
+          git tag v${{ env.NEW_VERSION }}
+          git push origin v${{ env.NEW_VERSION }}
 
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ env.VERSION }}
+          tag_name: v${{ env.NEW_VERSION }}
           files: |
             dist/*.zip
           generate_release_notes: true
