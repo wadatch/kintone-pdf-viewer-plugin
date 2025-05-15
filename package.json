@@ -1,0 +1,11 @@
+{
+  "name": "pdf-viewer-plugin",
+  "version": "1.0.0",
+  "description": "PDF Viewer Plugin for kintone",
+  "scripts": {
+    "watch": "nodemon --watch js --watch css --watch manifest.json --ext js,css,json --exec 'make build'"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+} 
