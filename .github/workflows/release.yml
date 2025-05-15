@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install kintone-plugin-packer
+        run: npm install -g @kintone/plugin-packer
+
       - name: Setup signing key
         run: |
           mkdir -p ppk

@@ -7,6 +7,7 @@
     "build": "make build"
   },
   "devDependencies": {
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "@kintone/plugin-packer": "^1.0.0"
   }
 } 
