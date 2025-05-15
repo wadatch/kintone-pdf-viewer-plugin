@@ -1,1 +1,36 @@
- 
+{
+  "manifest_version": 1,
+  "version": "1.0.0",
+  "type": "APP",
+  "name": {
+    "en": "PDF Viewer Plugin",
+    "ja": "PDFビューアープラグイン"
+  },
+  "description": {
+    "en": "View PDF files directly in kintone",
+    "ja": "kintone内でPDFファイルを直接表示します"
+  },
+  "homepage_url": {
+    "en": "https://github.com/your-username/pdf-viewer-plugin",
+    "ja": "https://github.com/your-username/pdf-viewer-plugin"
+  },
+  "icon": "image/icon.png",
+  "desktop": {
+    "js": [
+      "js/pdfjs/pdf.min.js",
+      "js/plugin.js"
+    ],
+    "css": [
+      "css/plugin.css"
+    ]
+  },
+  "mobile": {
+    "js": [
+      "js/pdfjs/pdf.min.js",
+      "js/plugin.js"
+    ],
+    "css": [
+      "css/plugin.css"
+    ]
+  }
+}

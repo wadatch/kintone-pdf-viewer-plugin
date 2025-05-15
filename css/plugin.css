@@ -1,0 +1,44 @@
+#kintone-pdf-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  height: 80vh;
+}
+
+#modal-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  z-index: 1;
+}
+
+#modal-close:hover {
+  color: #333;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+} 
