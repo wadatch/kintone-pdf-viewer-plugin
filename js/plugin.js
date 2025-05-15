@@ -1,6 +1,17 @@
 (function () {
   'use strict';
 
+  // モバイル端末かどうかを判定
+  function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  // モバイル端末の場合は機能を無効化
+  if (isMobile()) {
+    console.log('PDF Viewer Plugin: モバイル端末のため機能を無効化します');
+    return;
+  }
+
   // PDF.jsのワーカーを設定
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -13,13 +24,45 @@
   // PDFリンクにイベントリスナーを設定する関数
   function setupPDFLinks() {
     console.log('PDF Viewer Plugin: PDFリンクの設定を開始します');
+    // レコード詳細画面のファイルリンク
     const fileLinks = document.querySelectorAll('.control-file-field-gaia a');
-    console.log('PDF Viewer Plugin: 検出されたファイルリンク数:', fileLinks.length);
+    // アプリ一覧画面のファイルリンク
+    const appListFileLinks = document.querySelectorAll('.gaia-argoui-app-list-file a');
+    // レコード一覧画面のファイルリンク
+    const recordListFileLinks = document.querySelectorAll('.recordlist-file-others-gaia a');
+    
+    console.log('PDF Viewer Plugin: 検出されたファイルリンク数:', 
+      fileLinks.length + appListFileLinks.length + recordListFileLinks.length);
 
+    // レコード詳細画面のリンクを設定
     fileLinks.forEach((anchor, index) => {
       console.log(`PDF Viewer Plugin: リンク ${index + 1} のURL:`, anchor.href);
       if (anchor.href.endsWith('.pdf')) {
         console.log(`PDF Viewer Plugin: PDFリンクを検出: ${anchor.href}`);
+        // 既存のイベントリスナーを削除
+        anchor.removeEventListener('click', handlePDFClick);
+        // 新しいイベントリスナーを追加
+        anchor.addEventListener('click', handlePDFClick);
+      }
+    });
+
+    // アプリ一覧画面のリンクを設定
+    appListFileLinks.forEach((anchor, index) => {
+      console.log(`PDF Viewer Plugin: アプリ一覧のリンク ${index + 1} のURL:`, anchor.href);
+      if (anchor.href.endsWith('.pdf')) {
+        console.log(`PDF Viewer Plugin: アプリ一覧のPDFリンクを検出: ${anchor.href}`);
+        // 既存のイベントリスナーを削除
+        anchor.removeEventListener('click', handlePDFClick);
+        // 新しいイベントリスナーを追加
+        anchor.addEventListener('click', handlePDFClick);
+      }
+    });
+
+    // レコード一覧画面のリンクを設定
+    recordListFileLinks.forEach((anchor, index) => {
+      console.log(`PDF Viewer Plugin: レコード一覧のリンク ${index + 1} のURL:`, anchor.href);
+      if (anchor.href.endsWith('.pdf')) {
+        console.log(`PDF Viewer Plugin: レコード一覧のPDFリンクを検出: ${anchor.href}`);
         // 既存のイベントリスナーを削除
         anchor.removeEventListener('click', handlePDFClick);
         // 新しいイベントリスナーを追加
@@ -109,6 +152,15 @@
   // レコード編集画面の表示時
   kintone.events.on('app.record.edit.show', function (event) {
     console.log('PDF Viewer Plugin: レコード編集画面が表示されました');
+    setTimeout(function() {
+      setupPDFLinks();
+    }, 1000);
+    return event;
+  });
+
+  // アプリ一覧画面の表示時
+  kintone.events.on('app.index.show', function (event) {
+    console.log('PDF Viewer Plugin: アプリ一覧画面が表示されました');
     setTimeout(function() {
       setupPDFLinks();
     }, 1000);
