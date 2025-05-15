@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "PDF Viewer Plugin for kintone",
   "scripts": {
-    "watch": "nodemon --watch js --watch css --watch manifest.json --ext js,css,json --exec 'make build'"
+    "watch": "nodemon --watch js --watch css --watch manifest.json --ext js,css,json --exec 'make build'",
+    "build": "make build"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"

@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup signing key
+        run: |
+          mkdir -p ppk
+          echo "${{ secrets.SIGNING_KEY }}" > ppk/private.ppk
+          chmod 600 ppk/private.ppk
+
+      - name: Build
+        run: npm run build
+        env:
+          SIGNING_KEY_PATH: ppk/private.ppk
+
+      - name: Cleanup signing key
+        run: rm -f ppk/private.ppk
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
