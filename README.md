@@ -1,5 +1,9 @@
 # Kintone PDF Viewer Plugin
 
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/wadatch/kintone-pdf-viewer-plugin)](https://github.com/wadatch/kintone-pdf-viewer-plugin/releases)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/wadatch/kintone-pdf-viewer-plugin)](https://github.com/wadatch/kintone-pdf-viewer-plugin/tags)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/wadatch/kintone-pdf-viewer-plugin/release.yml?branch=main)](https://github.com/wadatch/kintone-pdf-viewer-plugin/actions)
+
 KintoneでPDFファイルを直接表示するためのプラグインです。
 
 ## 機能
