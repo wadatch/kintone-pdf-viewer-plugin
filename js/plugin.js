@@ -25,13 +25,6 @@
   function createDownloadIcon(anchor) {
     const downloadIcon = document.createElement('span');
     downloadIcon.className = 'pdf-download-icon';
-    downloadIcon.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" fill="none"></path>
-        <polyline points="7 10 12 15 17 10" fill="none"></polyline>
-        <line x1="12" y1="15" x2="12" y2="3" fill="none"></line>
-      </svg>
-    `;
     downloadIcon.style.cssText = `
       margin-left: 8px;
       cursor: pointer;
@@ -51,6 +44,14 @@
     downloadIcon.addEventListener('mouseout', function() {
       this.style.backgroundColor = '#f8f9fa';
     });
+    
+    downloadIcon.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="12" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" fill="none"></path>
+        <polyline points="7 10 12 15 17 10" fill="none"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3" fill="none"></line>
+      </svg>
+    `;
     
     // ダウンロードアイコンのクリックイベント
     downloadIcon.addEventListener('click', async function(e) {
@@ -343,23 +344,73 @@
       align-items: center;
     `;
 
-    const zoomInButton = document.createElement('button');
-    zoomInButton.textContent = '+';
-    zoomInButton.style.cssText = `
+    const buttonStyle = `
       padding: 5px 10px;
       border: 1px solid #ccc;
       border-radius: 3px;
       background: white;
       cursor: pointer;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
     `;
 
+    const rotateButton = document.createElement('button');
+    rotateButton.textContent = '↻';
+    rotateButton.style.cssText = buttonStyle;
+    rotateButton.title = '回転';
+
+    const downloadButton = document.createElement('button');
+    downloadButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="12" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" fill="none"></path>
+        <polyline points="7 10 12 15 17 10" fill="none"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3" fill="none"></line>
+      </svg>
+    `;
+    downloadButton.style.cssText = buttonStyle;
+    downloadButton.title = 'ダウンロード';
+
+    const zoomInButton = document.createElement('button');
+    zoomInButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <line x1="11" y1="8" x2="11" y2="14"></line>
+        <line x1="8" y1="11" x2="14" y2="11"></line>
+      </svg>
+    `;
+    zoomInButton.style.cssText = buttonStyle;
+    zoomInButton.title = '拡大';
+
     const zoomOutButton = document.createElement('button');
-    zoomOutButton.textContent = '-';
-    zoomOutButton.style.cssText = zoomInButton.style.cssText;
+    zoomOutButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <line x1="8" y1="11" x2="14" y2="11"></line>
+      </svg>
+    `;
+    zoomOutButton.style.cssText = buttonStyle;
+    zoomOutButton.title = '縮小';
+
+    const prevPageButton = document.createElement('button');
+    prevPageButton.textContent = '←';
+    prevPageButton.style.cssText = buttonStyle;
+    prevPageButton.title = '前のページ';
+
+    const nextPageButton = document.createElement('button');
+    nextPageButton.textContent = '→';
+    nextPageButton.style.cssText = buttonStyle;
+    nextPageButton.title = '次のページ';
 
     const pageInfo = document.createElement('span');
     pageInfo.style.cssText = `
       margin: 0 10px;
+      min-width: 80px;
+      text-align: center;
     `;
 
     const closeButton = document.createElement('button');
@@ -371,8 +422,8 @@
       font-size: 24px;
       cursor: pointer;
       padding: 0;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -393,9 +444,13 @@
     `;
 
     header.appendChild(controls);
+    controls.appendChild(rotateButton);
+    controls.appendChild(downloadButton);
     controls.appendChild(zoomOutButton);
-    controls.appendChild(pageInfo);
     controls.appendChild(zoomInButton);
+    controls.appendChild(prevPageButton);
+    controls.appendChild(pageInfo);
+    controls.appendChild(nextPageButton);
     header.appendChild(closeButton);
     pdfContainer.appendChild(canvas);
     modalContent.appendChild(header);
@@ -453,6 +508,38 @@
     zoomOutButton.addEventListener('click', function() {
       if (currentScale > 0.4) {
         currentScale -= 0.2;
+        renderPage(currentPage);
+      }
+    });
+
+    // 回転ボタンのイベントリスナー
+    let rotation = 0;
+    rotateButton.addEventListener('click', function() {
+      rotation = (rotation + 90) % 360;
+      canvas.style.transform = `rotate(${rotation}deg)`;
+    });
+
+    // ダウンロードボタンのイベントリスナー
+    downloadButton.addEventListener('click', function() {
+      const downloadLink = document.createElement('a');
+      downloadLink.href = pdfUrl;
+      downloadLink.download = 'document.pdf';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
+
+    // ページングボタンのイベントリスナー
+    prevPageButton.addEventListener('click', function() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
+      }
+    });
+
+    nextPageButton.addEventListener('click', function() {
+      if (currentPage < pdfDoc.numPages) {
+        currentPage++;
         renderPage(currentPage);
       }
     });
