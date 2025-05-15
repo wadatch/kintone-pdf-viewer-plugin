@@ -1,6 +1,6 @@
 {
   "manifest_version": 1,
-  "version": "1.0.0",
+  "version": 1,
   "type": "APP",
   "name": {
     "en": "PDF Viewer Plugin",
@@ -28,9 +28,6 @@
     "js": [
       "js/pdfjs/pdf.min.js",
       "js/plugin.js"
-    ],
-    "css": [
-      "css/plugin.css"
     ]
   }
 }
