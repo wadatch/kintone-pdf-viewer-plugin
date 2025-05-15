@@ -1,10 +1,21 @@
 # Kintone PDF Viewer Plugin
 
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/wadatch/kintone-pdf-viewer-plugin/release.yml?branch=main)](https://github.com/wadatch/kintone-pdf-viewer-plugin/actions)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/wadatch/kintone-pdf-viewer-plugin)](https://github.com/wadatch/kintone-pdf-viewer-plugin/releases)
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/wadatch/kintone-pdf-viewer-plugin)](https://github.com/wadatch/kintone-pdf-viewer-plugin/tags)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/wadatch/kintone-pdf-viewer-plugin/release.yml?branch=main)](https://github.com/wadatch/kintone-pdf-viewer-plugin/actions)
 
 KintoneでPDFファイルを直接表示するためのプラグインです。
+
+## ダウンロード
+
+最新のビルドファイルは[リリースページ](https://github.com/wadatch/kintone-pdf-viewer-plugin/releases)からダウンロードできます。
+
+## インストール方法
+
+1. リリースページから最新の`pdf-viewer-plugin.zip`をダウンロードします。
+2. Kintoneの管理画面からプラグインをアップロードします。
+   - 管理画面 > アプリ > プラグイン > プラグインの追加 > プラグインのアップロード
+   - ダウンロードしたZIPファイルを選択
 
 ## 機能
 
@@ -54,13 +65,6 @@ make build
 ```bash
 npm run watch
 ```
-
-## インストール方法
-
-1. `dist/pdf-viewer-plugin.zip` をダウンロードします
-2. Kintoneの管理画面からプラグインをアップロードします
-   - 管理画面 > アプリ > プラグイン > プラグインの追加 > プラグインのアップロード
-   - 生成されたZIPファイルを選択
 
 ## 使用方法
 
