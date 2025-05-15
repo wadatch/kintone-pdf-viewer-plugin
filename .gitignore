@@ -4,4 +4,23 @@ node_modules/
 *.log
 *.ppk
 !ppk/*.ppk
-dist/ 
+dist/
+
+# 環境変数
+.env
+.env.*
+
+# 秘密鍵
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 証明書
+*.crt
+*.cer
+*.der
+
+# その他の機密ファイル
+secrets/
+credentials/ 
