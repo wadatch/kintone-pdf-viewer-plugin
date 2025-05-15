@@ -7,8 +7,8 @@
     "ja": "PDFビューアープラグイン"
   },
   "description": {
-    "en": "View PDF files directly in kintone",
-    "ja": "kintone内でPDFファイルを直接表示します"
+    "en": "View PDF files directly in kintone. Copyright (c) 2024 WADA Hiroki (https://github.com/wadatch)",
+    "ja": "kintone内でPDFファイルを直接表示します。Copyright (c) 2024 WADA Hiroki (https://github.com/wadatch)"
   },
   "homepage_url": {
     "en": "https://github.com/your-username/pdf-viewer-plugin",

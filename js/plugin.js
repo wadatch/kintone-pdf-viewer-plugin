@@ -1,3 +1,11 @@
+/**
+ * Kintone PDF Viewer Plugin
+ * Copyright (c) 2024 WADA Hiroki (https://github.com/wadatch)
+ * 
+ * This plugin allows you to view PDF files directly in kintone.
+ * It provides features like zooming, rotating, and downloading PDFs.
+ */
+
 (function () {
   'use strict';
 
