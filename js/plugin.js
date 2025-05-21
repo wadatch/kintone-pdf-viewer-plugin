@@ -145,9 +145,211 @@
     return downloadIcon;
   }
 
-  // PDFリンクにイベントリスナーを設定する関数
-  function setupPDFLinks() {
-    console.log('PDF Viewer Plugin: PDFリンクの設定を開始します');
+  // テキストファイルのプレビューを表示する関数
+  function showTextModal(textUrl) {
+    console.log('PDF Viewer Plugin: テキストファイルのプレビューを開始します');
+    console.log('PDF Viewer Plugin: テキストファイル URL:', textUrl);
+
+    const existingModal = document.getElementById('kintone-pdf-modal');
+    if (existingModal) {
+      console.log('PDF Viewer Plugin: 既存のモーダルを削除します');
+      existingModal.remove();
+    }
+
+    const modal = document.createElement('div');
+    modal.id = 'kintone-pdf-modal';
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    `;
+
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      position: relative;
+      width: 90%;
+      height: 90%;
+      display: flex;
+      flex-direction: column;
+    `;
+
+    const header = document.createElement('div');
+    header.style.cssText = `
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+    `;
+
+    const controls = document.createElement('div');
+    controls.style.cssText = `
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    `;
+
+    const buttonStyle = `
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background: white;
+      cursor: pointer;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+    `;
+
+    const downloadButton = document.createElement('button');
+    downloadButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="12" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" fill="none"></path>
+        <polyline points="7 10 12 15 17 10" fill="none"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3" fill="none"></line>
+      </svg>
+    `;
+    downloadButton.style.cssText = buttonStyle;
+    downloadButton.title = 'ダウンロード';
+
+    const closeButton = document.createElement('button');
+    closeButton.id = 'modal-close';
+    closeButton.textContent = '×';
+    closeButton.style.cssText = `
+      border: none;
+      background: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
+
+    const textContainer = document.createElement('div');
+    textContainer.style.cssText = `
+      flex: 1;
+      position: relative;
+      overflow: auto;
+      background-color: #f0f0f0;
+      padding: 20px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    `;
+
+    header.appendChild(controls);
+    controls.appendChild(downloadButton);
+    header.appendChild(closeButton);
+    modalContent.appendChild(header);
+    modalContent.appendChild(textContainer);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    console.log('PDF Viewer Plugin: テキストプレビューモーダルを表示しました');
+
+    // テキストファイルの読み込みと表示
+    fetch(textUrl)
+      .then(response => response.text())
+      .then(text => {
+        textContainer.textContent = text;
+      })
+      .catch(error => {
+        console.error('PDF Viewer Plugin: テキストファイルの読み込みに失敗しました', error);
+        textContainer.innerHTML = '<div style="text-align: center; padding: 20px;">テキストファイルの読み込みに失敗しました</div>';
+      });
+
+    // ダウンロードボタンのイベントリスナー
+    downloadButton.addEventListener('click', function() {
+      const downloadLink = document.createElement('a');
+      downloadLink.href = textUrl;
+      downloadLink.download = 'document.txt';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
+
+    closeButton.addEventListener('click', function() {
+      console.log('PDF Viewer Plugin: モーダルを閉じます');
+      modal.remove();
+      // Blob URLを解放
+      if (textUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(textUrl);
+      }
+    });
+  }
+
+  // テキストファイルリンクのクリックハンドラー
+  function handleTextClick(e) {
+    console.log('PDF Viewer Plugin: テキストファイルリンクがクリックされました');
+    e.preventDefault();
+    e.stopPropagation();
+
+    // URLからファイル情報を抽出
+    const url = new URL(this.href);
+    const params = new URLSearchParams(url.search);
+    const app = params.get('app');
+    const field = params.get('field');
+    const record = params.get('record');
+    const id = params.get('id');
+    
+    if (!app || !field || !record || !id) {
+      console.error('PDF Viewer Plugin: 必要なパラメータが見つかりません');
+      return;
+    }
+
+    // レコードからファイル情報を取得
+    kintone.api(kintone.api.url('/k/v1/record', true), 'GET', {
+      app: app,
+      id: record
+    }).then(function(resp) {
+      console.log('PDF Viewer Plugin: レコードの取得に成功しました');
+      const fileInfo = resp.record[field].value.find(file => file.fileKey === id);
+      
+      if (!fileInfo) {
+        console.error('PDF Viewer Plugin: ファイル情報が見つかりません');
+        return;
+      }
+
+      // ファイルを取得
+      return kintone.api(kintone.api.url('/k/v1/file', true), 'GET', {
+        fileKey: fileInfo.fileKey
+      });
+    }).then(function(resp) {
+      if (!resp) return;
+      
+      console.log('PDF Viewer Plugin: テキストファイルの取得に成功しました');
+      // Base64エンコードされたテキストデータをBlobに変換
+      const binary = atob(resp);
+      const array = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        array[i] = binary.charCodeAt(i);
+      }
+      const blob = new Blob([array], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      showTextModal(url);
+    }).catch(function(error) {
+      console.error('PDF Viewer Plugin: ファイルの取得に失敗しました', error);
+      // エラーが発生した場合は、直接URLを使用して表示を試みる
+      console.log('PDF Viewer Plugin: 直接URLを使用して表示を試みます');
+      showTextModal(this.href);
+    }.bind(this));
+  }
+
+  // ファイルリンクにイベントリスナーを設定する関数
+  function setupFileLinks() {
+    console.log('PDF Viewer Plugin: ファイルリンクの設定を開始します');
     // レコード詳細画面のファイルリンク
     const fileLinks = document.querySelectorAll('.control-file-field-gaia a');
     // アプリ一覧画面のファイルリンク
@@ -170,6 +372,15 @@
         // ダウンロードアイコンを追加
         const downloadIcon = createDownloadIcon(anchor);
         anchor.parentNode.insertBefore(downloadIcon, anchor.nextSibling);
+      } else if (anchor.href.endsWith('.txt')) {
+        console.log(`PDF Viewer Plugin: テキストファイルリンクを検出: ${anchor.href}`);
+        // 既存のイベントリスナーを削除
+        anchor.removeEventListener('click', handleTextClick);
+        // 新しいイベントリスナーを追加
+        anchor.addEventListener('click', handleTextClick);
+        // ダウンロードアイコンを追加
+        const downloadIcon = createDownloadIcon(anchor);
+        anchor.parentNode.insertBefore(downloadIcon, anchor.nextSibling);
       }
     });
 
@@ -185,6 +396,15 @@
         // ダウンロードアイコンを追加
         const downloadIcon = createDownloadIcon(anchor);
         anchor.parentNode.insertBefore(downloadIcon, anchor.nextSibling);
+      } else if (anchor.href.endsWith('.txt')) {
+        console.log(`PDF Viewer Plugin: アプリ一覧のテキストファイルリンクを検出: ${anchor.href}`);
+        // 既存のイベントリスナーを削除
+        anchor.removeEventListener('click', handleTextClick);
+        // 新しいイベントリスナーを追加
+        anchor.addEventListener('click', handleTextClick);
+        // ダウンロードアイコンを追加
+        const downloadIcon = createDownloadIcon(anchor);
+        anchor.parentNode.insertBefore(downloadIcon, anchor.nextSibling);
       }
     });
 
@@ -197,6 +417,15 @@
         anchor.removeEventListener('click', handlePDFClick);
         // 新しいイベントリスナーを追加
         anchor.addEventListener('click', handlePDFClick);
+        // ダウンロードアイコンを追加
+        const downloadIcon = createDownloadIcon(anchor);
+        anchor.parentNode.insertBefore(downloadIcon, anchor.nextSibling);
+      } else if (anchor.href.endsWith('.txt')) {
+        console.log(`PDF Viewer Plugin: レコード一覧のテキストファイルリンクを検出: ${anchor.href}`);
+        // 既存のイベントリスナーを削除
+        anchor.removeEventListener('click', handleTextClick);
+        // 新しいイベントリスナーを追加
+        anchor.addEventListener('click', handleTextClick);
         // ダウンロードアイコンを追加
         const downloadIcon = createDownloadIcon(anchor);
         anchor.parentNode.insertBefore(downloadIcon, anchor.nextSibling);
@@ -267,7 +496,7 @@
     
     // DOMの読み込み完了を待ってから実行
     setTimeout(function() {
-      setupPDFLinks();
+      setupFileLinks();
     }, 1000);
 
     return event;
@@ -277,7 +506,7 @@
   kintone.events.on('app.record.index.show', function (event) {
     console.log('PDF Viewer Plugin: レコード一覧画面が表示されました');
     setTimeout(function() {
-      setupPDFLinks();
+      setupFileLinks();
     }, 1000);
     return event;
   });
@@ -286,7 +515,7 @@
   kintone.events.on('app.record.edit.show', function (event) {
     console.log('PDF Viewer Plugin: レコード編集画面が表示されました');
     setTimeout(function() {
-      setupPDFLinks();
+      setupFileLinks();
     }, 1000);
     return event;
   });
@@ -295,7 +524,7 @@
   kintone.events.on('app.index.show', function (event) {
     console.log('PDF Viewer Plugin: アプリ一覧画面が表示されました');
     setTimeout(function() {
-      setupPDFLinks();
+      setupFileLinks();
     }, 1000);
     return event;
   });
