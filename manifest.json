@@ -3,12 +3,12 @@
   "version": 2,
   "type": "APP",
   "name": {
-    "en": "PDF Viewer Plugin",
-    "ja": "PDFビューアープラグイン"
+    "en": "File Viewer Plugin",
+    "ja": "ファイルビューアープラグイン"
   },
   "description": {
-    "en": "View PDF files directly in kintone. Copyright (c) 2024 WADA Hiroki (https://github.com/wadatch)",
-    "ja": "kintone内でPDFファイルを直接表示します。Copyright (c) 2024 WADA Hiroki (https://github.com/wadatch)"
+    "en": "View PDF and text files directly in kintone. Copyright (c) 2024 WADA Hiroki (https://github.com/wadatch)",
+    "ja": "kintone内でPDFファイルとテキストファイルを直接表示します。Copyright (c) 2024 WADA Hiroki (https://github.com/wadatch)"
   },
   "homepage_url": {
     "en": "https://github.com/your-username/pdf-viewer-plugin",
